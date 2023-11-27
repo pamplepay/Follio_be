@@ -1,0 +1,3 @@
+# PRECAUTION: For GCP. avoid production dependencies that aren't in development
+-r ./requirements/production.txt
+google-cloud-profiler

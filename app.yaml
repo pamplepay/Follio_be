@@ -1,0 +1,54 @@
+# https://cloud.google.com/appengine/docs/standard/python/config/appref
+service: default
+runtime: python38
+instance_class: F1 # https://cloud.google.com/appengine/docs/standard#instance_classes
+entrypoint: ./entrypoint.sh
+handlers:
+# This configures Google App Engine to serve the files in the app's static
+# directory.
+- url: /static
+  static_dir: static/
+  http_headers:
+    Access-Control-Allow-Origin: '*'
+# This handler routes all requests not caught above to your main app. It is
+# required when static routes are defined, but can be omitted (along with
+# the entire handlers section) when there are no static files defined.
+- url: /.*
+  secure: always
+  script: auto
+
+# https://cloud.google.com/appengine/docs/standard/python/config/appref#automatic_scaling_target_throughput_utilization
+automatic_scaling:
+  max_instances: 1
+
+#beta_settings:
+#  cloud_sql_instances: creo-lets:asia-northeast1:creo-prod
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'config.settings.production'
+  IS_GOOGLE_APP_ENGINE: 'True'
+  DJANGO_SECRET_KEY: 'xbp&%!&677ikuqod^6yfx#2d4u0hddbv-o*$xi2wz=(zpqk!=p'
+  DJANGO_DEBUG: True
+  DJANGO_ALLOWED_HOSTS: '*'
+
+  DJANGO_DB_HOST: 'foliio-382009:asia-northeast3:foliio-sql'
+  DJANGO_DEFAULT_DATABASE_PORT: '5432'
+  DJANGO_DEFAULT_DATABASE_NAME: 'foliio_db'
+  DJANGO_DEFAULT_DATABASE_USER: 'postgres'
+  DJANGO_DEFAULT_DATABASE_PASSWORD: 'redcap123'
+
+  GOOGLE_APPLICATION_CREDENTIALS: '.gappcredentials.json'
+  DJANGO_GCP_STORAGE_BUCKET_NAME: 'foliio-382009.appspot.com'
+  FCM_SERVER_KEY: 'AAAA6IUIjpI:APA91bEQgUid2fSNMXnnhp6VilB8ZaGX8NSPmf0zyQScQHNpa3aGCinDE7Qu80MYTwjDCdsRiFuYsc0aB3JkqVP__6muo1FnxZaoAGrYKto9vmlRDSPGqceM4KDCFBTx6dMBzrrGF5oq'
+
+#  GAE_APPLICATION  The ID of your App Engine application. This ID is prefixed with 'region code~' such as 'e~' for      applications deployed in Europe.
+#  GAE_DEPLOYMENT_ID    The ID of the current deployment.
+#  GAE_ENV  The App Engine environment. Set to standard.
+#  GAE_INSTANCE The ID of the instance on which your service is currently running.
+#  GAE_MEMORY_MB    The amount of memory available to the application process, in MB.
+#  GAE_RUNTIME  The runtime specified in your app.yaml file.
+#  GAE_SERVICE  The service name specified in your app.yaml file. If no service name is specified, it is set to default.
+#  GAE_VERSION  The current version label of your service.
+#  GOOGLE_CLOUD_PROJECT The Google Cloud project ID associated with your application.
+#  NODE_ENV Set to production when your service is deployed.
+#  PORT The port that receives HTTP requests.

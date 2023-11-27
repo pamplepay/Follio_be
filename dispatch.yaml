@@ -1,0 +1,9 @@
+dispatch:
+    - url: "foliio.co.kr/*"
+      service: weapon-fe
+
+    - url: "www.foliio.co.kr/*"
+      service: weapon-fe
+
+    - url: "api.foliio.co.kr/*"
+      service: default
