@@ -53,16 +53,31 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 
 DB_HOST = env.str('DJANGO_DB_HOST')
 IS_GOOGLE_APP_ENGINE = env.bool('IS_GOOGLE_APP_ENGINE', False)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env.str('DJANGO_DEFAULT_DATABASE_NAME'),
+#         'USER': env.str('DJANGO_DEFAULT_DATABASE_USER'),
+#         'PASSWORD': env.str('DJANGO_DEFAULT_DATABASE_PASSWORD'),
+#         'HOST': f"/cloudsql/{DB_HOST}" if IS_GOOGLE_APP_ENGINE else DB_HOST,
+#         'PORT': env.int('DJANGO_DEFAULT_DATABASE_PORT', 5432),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': env.str('DJANGO_DEFAULT_DATABASE_NAME'),
         'USER': env.str('DJANGO_DEFAULT_DATABASE_USER'),
         'PASSWORD': env.str('DJANGO_DEFAULT_DATABASE_PASSWORD'),
-        'HOST': f"/cloudsql/{DB_HOST}" if IS_GOOGLE_APP_ENGINE else DB_HOST,
-        'PORT': env.int('DJANGO_DEFAULT_DATABASE_PORT', 5432),
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'ssl': {'require': False},
+        },
     }
 }
+
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
