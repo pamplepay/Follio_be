@@ -70,7 +70,7 @@ DATABASES = {
         'NAME': env.str('DJANGO_DEFAULT_DATABASE_NAME'),
         'USER': env.str('DJANGO_DEFAULT_DATABASE_USER'),
         'PASSWORD': env.str('DJANGO_DEFAULT_DATABASE_PASSWORD'),
-        'HOST': 'localhost',
+        'HOST': '192.168.0.96',
         'PORT': '3306',
         'OPTIONS': {
             'ssl': {'require': False},
