@@ -7,6 +7,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from weapon.core.utils import convert_pdf_to_png
+from weapon.core.utils import ocr_process
 
 from weapon.customers.calculate import calculate_analysis
 from weapon.customers.serializers import CustomerSerializer
@@ -240,6 +242,19 @@ class CustomerInsuranceViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+    # jhpark_20231221_S
+    # pdf 파일을 png 파일로 변경 후 ocr detect 처리
+    @action(methods=['post'], detail=True)
+    def detect(self, request, pk):
+        info = request.data['info']
+        print(info)
+        png_path = convert_pdf_to_png(info)
+        result = {}
+        ocr_result = ocr_process(png_path)
+        result['data'] = ocr_result
+        return Response(result, status=status.HTTP_200_OK)
+    # jhpark_20231221_E
 
     @action(methods=['get'], detail=True)
     def analysis(self, request, pk):
