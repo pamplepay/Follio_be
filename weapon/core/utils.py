@@ -10,7 +10,6 @@ import requests
 import json
 import fitz
 from PIL import Image
-
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -121,6 +120,7 @@ def resize_png_image(file_path, zoom_factor=2):
         except IOError:
             print(f"Cannot open or resize {img_filepath}")
     
+
 def convert_pdf_to_png(pdf_path, zoom=2):
     # PDF 파일 열기
     current_path = os.getcwd()

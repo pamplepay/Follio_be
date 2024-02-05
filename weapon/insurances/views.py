@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from weapon.core.utils import convert_pdf_to_png, resize_png_image
+from weapon.core.utils import convert_pdf_to_png
 from weapon.core.utils import ocr_process
 
 from weapon.customers.calculate import calculate_analysis
@@ -21,11 +22,9 @@ from weapon.insurances.serializers import InsuranceCategorySerializer, Insurance
 from weapon.core.ocr.ocrparsing import ocr_parsing
 import re
 from difflib import SequenceMatcher
-from weapon.core.ocr.LIG.ligdata import str_lig_data
 
 from weapon.core.ocr.ocrdata import LossInsurance, LifeInsurance
 from django.http import JsonResponse
-from weapon.core.ocr.SAMSUNG.samsungfiremarine import samsung_fire_Marine_insurance_parsing
 
 KST = timezone('Asia/Seoul')
 UTC = timezone("UTC")
@@ -253,7 +252,7 @@ class CustomerInsuranceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     # jhpark_20231221_S
-        # 실제 정답을 찾는 함수
+    # 실제 정답을 찾는 함수
     def find_actual_string(self, ocr_string, str_lig_data, threshold=0.8):
         # str_lig_data를 문장 단위로 분리
         sentences = str_lig_data.split('\n')
@@ -274,6 +273,7 @@ class CustomerInsuranceViewSet(viewsets.ModelViewSet):
     def detect(self, request, pk):
         info = request.data['info']
         print(info)
+
         if not info.endswith(".pdf"):
             png_path = resize_png_image(info)
         else:
@@ -296,6 +296,12 @@ class CustomerInsuranceViewSet(viewsets.ModelViewSet):
         if all_empty == False :
             result['detail_data'] = cls_ocr_data.dict_detail_data
         return JsonResponse(result, safe=False, status=status.HTTP_200_OK)
+
+        png_path = convert_pdf_to_png(info)
+        result = {}
+        ocr_result = ocr_process(png_path)
+        result['data'] = ocr_result
+        return Response(result, status=status.HTTP_200_OK)
     # jhpark_20231221_E
 
     @action(methods=['get'], detail=True)
