@@ -7,6 +7,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from weapon.core.utils import convert_pdf_to_png, resize_png_image
+from weapon.core.utils import ocr_process
 
 from weapon.customers.calculate import calculate_analysis
 from weapon.customers.serializers import CustomerSerializer
@@ -15,6 +17,15 @@ from weapon.insurances.models import InsuranceCategory, Insurance, CustomerInsur
     InsuranceTag
 from weapon.insurances.serializers import InsuranceCategorySerializer, InsuranceSerializer, \
     CustomerInsuranceSerializer, CustomerInsuranceSerializerForDetail, AnalysisCategorySerializer
+
+from weapon.core.ocr.ocrparsing import ocr_parsing
+import re
+from difflib import SequenceMatcher
+from weapon.core.ocr.LIG.ligdata import str_lig_data
+
+from weapon.core.ocr.ocrdata import LossInsurance, LifeInsurance
+from django.http import JsonResponse
+from weapon.core.ocr.SAMSUNG.samsungfiremarine import samsung_fire_Marine_insurance_parsing
 
 KST = timezone('Asia/Seoul')
 UTC = timezone("UTC")
@@ -240,6 +251,52 @@ class CustomerInsuranceViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+    # jhpark_20231221_S
+        # 실제 정답을 찾는 함수
+    def find_actual_string(self, ocr_string, str_lig_data, threshold=0.8):
+        # str_lig_data를 문장 단위로 분리
+        sentences = str_lig_data.split('\n')
+
+        for sentence in sentences:
+            # 각 문장과 OCR 문자열의 유사도 계산
+            similarity = SequenceMatcher(None, ocr_string, sentence).ratio()
+
+            # 유사도가 threshold 이상인 경우 해당 문장 반환
+            if similarity >= threshold:
+                return sentence
+
+        # 유사도가 threshold 이상인 문장이 없는 경우 None 반환
+        return None
+
+    # pdf 파일을 png 파일로 변경 후 ocr detect 처리
+    @action(methods=['post'], detail=True)
+    def detect(self, request, pk):
+        info = request.data['info']
+        print(info)
+        if not info.endswith(".pdf"):
+            png_path = resize_png_image(info)
+        else:
+            png_path = convert_pdf_to_png(info)
+        result = {}
+        ocr_data = ocr_process(png_path)
+        if ocr_data is None:
+            return Response('사용할 수 없는 문서입니다.', status=status.HTTP_400_BAD_REQUEST)
+        print(ocr_data)
+        cls_ocr_data = ocr_parsing(ocr_data)
+        #테스트용
+        #cls_ocr_data = samsung_fire_Marine_insurance_parsing()
+        if cls_ocr_data.dict_life_head_data['생명보험'] > -1:
+            dict_life_head = cls_ocr_data.dict_life_head_data
+            result['life_head'] = dict_life_head
+        elif cls_ocr_data.dict_loss_head_data['손해보험'] > -1:
+            dict_loss_head = cls_ocr_data.dict_loss_head_data
+            result['loss_head'] = dict_loss_head
+        all_empty = all(len(value) == 0 for value in cls_ocr_data.dict_detail_data.values())
+        if all_empty == False :
+            result['detail_data'] = cls_ocr_data.dict_detail_data
+        return JsonResponse(result, safe=False, status=status.HTTP_200_OK)
+    # jhpark_20231221_E
 
     @action(methods=['get'], detail=True)
     def analysis(self, request, pk):

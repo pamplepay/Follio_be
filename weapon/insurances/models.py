@@ -530,3 +530,12 @@ class CustomerInsuranceDetail(models.Model):
                                                  self.premium, 0), 0)
                 self.total_renewal_premium = total_renewal_premium
 
+# jhpark_20231229_S
+# 보험 증권 테이블 추가
+class MyModel(models.Model):
+    insurance_content = models.TextField(max_length=500)
+
+    def __str__(self):
+        return self.insurance_content[:50]  # 객체를 문자열로 표현할 때 처음 50자만 표시
+# jhpark_20231229_E
+

@@ -15,6 +15,7 @@ from weapon.customers.serializers import CustomerSerializer, CustomerMedicalHist
 from weapon.insurances.models import CustomerInsurance, CustomerInsuranceDetail, InsuranceDetail, AnalysisDetail, \
     ChartDetail
 from weapon.insurances.serializers import CustomerInsuranceSerializer
+from django.core.files.storage import FileSystemStorage
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -388,6 +389,34 @@ class CustomerViewSet(viewsets.ModelViewSet):
         }
 
         return Response(result, status=status.HTTP_200_OK)
+    # jhpark_20231221_S
+    # 클라이언트에서 업로드 요청온 PDF 파일을 저장
+    @action(methods=['post'], detail=True)
+    def uploadimage(self, request, pk):
+        # ID 값 검증
+        id_value = request.data.get('id')
+        if not id_value:
+            return Response({'detail': 'ID를 찾을 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 파일 검증
+        if 'file' not in request.FILES:
+            return Response({'detail': '파일을 찾을 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        fs = FileSystemStorage()
+
+        file = request.FILES['file']
+        # 파일 저장
+        filename = f'{id_value}_{file.name}'
+
+        if fs.exists(filename):
+            fs.delete(filename)
+
+        filedata = fs.save(filename, file)
+        file_url = fs.url(filedata)
+
+        return Response({'detail': filedata}, status=status.HTTP_200_OK)
+    # jhpark_20231221_E
+
 
 
 class CustomerMedicalHistoryViewSet(viewsets.ModelViewSet):

@@ -291,3 +291,18 @@ db.sqlite3
 
 # vscode
 .vscode
+10_교보 웰빙건강.png
+corrected_1_1.png.png
+ocr_results.txt
+ocrdata/img/1_1.png
+ocrdata/img/1_2.png
+ocrdata/insurancelist/list.json
+ocrdata/json/result1.json
+ocrdata/json/result2.json
+ocrdata/img/corrected_1.png
+weapon/core/utils.py.bak
+weapon/core/ocr/LIG/corrected_image.png
+weapon/core/ocr/LIG/corrected_image2.png
+weapon/core/ocr/LIG/corrected_resized_image.png
+weapon/customers/views.py.bak
+weapon/insurances/views.py.bak
