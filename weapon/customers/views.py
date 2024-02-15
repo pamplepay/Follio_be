@@ -16,6 +16,7 @@ from weapon.insurances.models import CustomerInsurance, CustomerInsuranceDetail,
     ChartDetail
 from weapon.insurances.serializers import CustomerInsuranceSerializer
 from django.core.files.storage import FileSystemStorage
+import os
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -408,8 +409,14 @@ class CustomerViewSet(viewsets.ModelViewSet):
         # 파일 저장
         filename = f'{id_value}_{file.name}'
 
-        if fs.exists(filename):
-            fs.delete(filename)
+        current_path = os.getcwd()
+        media_folder = os.path.join(current_path, 'weapon/media')
+
+        # 'media' 폴더 내의 PDF 파일 경로
+        img_filepath = os.path.join(media_folder, filename)
+
+        if fs.exists(img_filepath):
+            fs.delete(img_filepath)
 
         filedata = fs.save(filename, file)
         file_url = fs.url(filedata)

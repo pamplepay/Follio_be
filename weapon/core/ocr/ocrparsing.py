@@ -91,19 +91,23 @@ def find_string_by_string(extract_data_list, search_word, search_split):
                         #lst_data = data.split(search_word)
                         search_word_index = data.index(search_word) + len(search_word)
                         if search_word_index < len(data):
-                            lst_data = data[search_word_index:].split()
-                            find_data = lst_data[left_and_right_offset]
-                            target_data = find_data.split(split_char)
+                            lst_space_data = data.split(search_word)
+                            lst_indexes = [index for index, item in enumerate(lst_space_data) if search_word in item]
+                            if left_and_right_offset > 0:
+                                result = find_string_by_number([lst_space_data[1]], split_char, target_index)
+                            elif left_and_right_offset < 0:
+                                result = find_string_by_number([lst_space_data[0]], split_char, target_index)
                         else:
                             # search_word_index = data.index(search_word)
                             # lst_data = data[:search_word_index].split()
-                            lst_space_data = data.split()
-                            lst_indexes = [index for index, item in enumerate(lst_space_data) if search_word in item]
-                            find_string = lst_space_data[lst_indexes[0]]
-                            lst_find_data = find_string.split(search_word)
-                            find_data = lst_find_data[0]
-                            target_data = find_data.split(split_char)
-                    result = target_data[target_index]
+                            search_word_index = data.index(search_word) + len(search_word)
+                            if search_word_index < len(data):
+                                lst_space_data = data.split(search_word)
+                                lst_indexes = [index for index, item in enumerate(lst_space_data) if search_word in item]
+                                if left_and_right_offset > 0:
+                                    pass
+                                elif left_and_right_offset < 0:
+                                    result = find_string_by_number(lst_space_data, split_char, left_and_right_offset)
                     return result.strip()
 
         return None
@@ -271,12 +275,12 @@ def get_ocr_data(extract_data_list, ocr_data):
         search_word = ocr_data['계약자']
         if is_number(ocr_data['계약자_LOC']):
             pass
-        else:
+        else:      
+            # search_data = find_string_by_string(extract_data_list, search_word, data_pos)
+            # modified_data = add_asterisks(search_data)
             data_pos = ocr_data['계약자_LOC']
             search_data = find_string_by_string(extract_data_list, search_word, data_pos)
-            modified_data = add_asterisks(search_data)
-            ocrdata.dict_life_head_data['계약자'] = modified_data
-            search_data = find_string_by_string(extract_data_list, search_word, data_pos)
+            ocrdata.dict_life_head_data['계약자'] = search_data
         search_word = ocr_data['납입기간']
         if is_number(ocr_data['납입기간_LOC']):
             pass
@@ -337,11 +341,11 @@ def get_ocr_data(extract_data_list, ocr_data):
             search_data = find_string_by_number(extract_data_list, search_word, data_pos)
             ocrdata.dict_loss_head_data['계약자'] = search_data
         else:
+            # search_data = find_string_by_string(extract_data_list, search_word, data_pos)
+            # modified_data = add_asterisks(search_data)
             data_pos = ocr_data['계약자_LOC']
             search_data = find_string_by_string(extract_data_list, search_word, data_pos)
-            modified_data = add_asterisks(search_data)
-            ocrdata.dict_loss_head_data['계약자'] = modified_data
-            search_data = find_string_by_string(extract_data_list, search_word, data_pos)
+            ocrdata.dict_loss_head_data['계약자'] = search_data
 
         search_word = ocr_data['납입기간']
         if is_number(ocr_data['납입기간_LOC']):

@@ -25,6 +25,7 @@ from difflib import SequenceMatcher
 
 from weapon.core.ocr.ocrdata import LossInsurance, LifeInsurance
 from django.http import JsonResponse
+import os
 
 KST = timezone('Asia/Seoul')
 UTC = timezone("UTC")
@@ -296,12 +297,6 @@ class CustomerInsuranceViewSet(viewsets.ModelViewSet):
         if all_empty == False :
             result['detail_data'] = cls_ocr_data.dict_detail_data
         return JsonResponse(result, safe=False, status=status.HTTP_200_OK)
-
-        png_path = convert_pdf_to_png(info)
-        result = {}
-        ocr_result = ocr_process(png_path)
-        result['data'] = ocr_result
-        return Response(result, status=status.HTTP_200_OK)
     # jhpark_20231221_E
 
     @action(methods=['get'], detail=True)

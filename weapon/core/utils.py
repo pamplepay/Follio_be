@@ -104,21 +104,21 @@ def ncp_v2_make_signature(uri, timestamp, access_key, secret_key):
 # pdf 파일을 png 파일로 변경
 def resize_png_image(file_path, zoom_factor=2):
     if file_path.endswith(".png"):
-        try:
-            current_path = os.getcwd()
-            media_folder = os.path.join(current_path, 'weapon/media')
+        current_path = os.getcwd()
+        media_folder = os.path.join(current_path, 'weapon/media')
 
-            # 'media' 폴더 내의 PDF 파일 경로
-            img_filepath = os.path.join(media_folder, file_path)
+        # 'media' 폴더 내의 PDF 파일 경로
+        img_filepath = os.path.join(media_folder, file_path)
+        img_filepath = img_filepath.replace("\\", "/")
 
-            with Image.open(img_filepath) as img:
-                new_img = img.resize([int(zoom_factor * size) for size in img.size])
-                os.remove(img_filepath)
-                new_img.save(img_filepath)
-            
-                return img_filepath
-        except IOError:
-            print(f"Cannot open or resize {img_filepath}")
+        new_img = None
+
+        with Image.open(img_filepath) as img:
+            new_img = img.resize([int(zoom_factor * size) for size in img.size])
+        new_img.save(img_filepath)
+        
+        #os.remove(img_filepath)
+        return img_filepath
     
 
 def convert_pdf_to_png(pdf_path, zoom=2):
