@@ -86,7 +86,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
         mobile_phone_number = serializer.data.get('mobile_phone_number')
         customer_id = serializer.data.get('id')
-        url = 'https://foliio.co.kr/customer/' + str(customer_id) + '/agree'
+        url = 'http://foliio.co.kr/customer/' + str(customer_id) + '/agree'
         message = '[폴리오] 개인 정보 수집 및 이용 동의\n\n▶ 아래 링크를 클릭해 동의를 완료해 주세요. \n' + url
         title = '[폴리오] 개인 정보 수집 및 이용 동의'
         send_sms([mobile_phone_number], message, title)
@@ -103,7 +103,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
         if is_agree_term:
             phone_number = instance.user.profile.phone_number
             if phone_number:
-                url = f'https://foliio.co.kr/customer/{instance.id}'
+                url = f'http://foliio.co.kr/customer/{instance.id}'
                 message = f'[폴리오] {instance.name}님의 동의가 완료 되었어요!'
                 title = f'[폴리오] {instance.name}님의 동의가 완료 되었어요!'
                 send_sms([phone_number], message, title)

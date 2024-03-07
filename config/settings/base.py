@@ -70,7 +70,7 @@ DATABASES = {
         'NAME': env.str('DJANGO_DEFAULT_DATABASE_NAME'),
         'USER': env.str('DJANGO_DEFAULT_DATABASE_USER'),
         'PASSWORD': env.str('DJANGO_DEFAULT_DATABASE_PASSWORD'),
-        'HOST': '192.168.0.96',
+        'HOST': '211.234.108.90',
         'PORT': '3306',
         'OPTIONS': {
             'ssl': {'require': False},
@@ -277,21 +277,21 @@ MANAGERS = ADMINS
 # https://docs.djangoproject.com/en/dev/ref/settings/#logging
 # See https://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         },
+#     },
+# }
 
 
 # django-allauth

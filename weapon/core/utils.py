@@ -62,33 +62,79 @@ def send_email(to, subject, template, value_dict):
 
 
 def send_sms(phone_number_list, mesg, title):
-    url = f'https://api-sms.cloud.toast.com'
-    type = 'sms'
+    # BASE_DIR = getattr(settings, 'BASE_DIR', None)
+    file_path = "./naver_cloud_sens.json" # 네이버 sens api key 파일
+    
+
+    with open(os.path.join(file_path), encoding='utf-8') as f:
+        nc_sens_key = json.load(f)
+
+    ##### 네이버 sens 서비스 이용 위한 json request 형식 #####
+    timestamp = str(int(time.time() * 1000))
+
+    url = "https://sens.apigw.ntruss.com"
+    uri = "/sms/v2/services/ncp:sms:kr:306737371424:quickself/messages"
+    apiUrl = url + uri
+
+    access_key = nc_sens_key['NAVER_SENS_ACCESS_KEY']
+    secret_key = bytes(nc_sens_key['NAVER_SENS_SECRET_KEY'], 'UTF-8')
+    message = bytes("POST" + " " + uri + "\n" + timestamp + "\n" + access_key, 'UTF-8')
+    signingKey = base64.b64encode(hmac.new(secret_key, message, digestmod=hashlib.sha256).digest())
+    phonenum = phone_number_list[0].replace('-', '')
+
+    type = 'SMS'
     if len(mesg) > 45:
-        type = 'mms'
-    uri = f'/sms/v2.4/appKeys/{appKey}/sender/{type}'
+        type = 'MMS'
 
-    recipientList = []
-    for phone_number in phone_number_list:
-        recipientList.append({
-            "recipientNo": phone_number,
-        })
-    data = {
-        "body": mesg,
-        "sendNo": SMS_SEND_NUMBER,
-        "recipientList": recipientList
+    body = {
+        "type" : type,
+        "contentType" : "COMM",
+        "from" : "01052802707",
+        "subject" : "폴리오",
+        "content" : mesg,
+        "messages" : [{"to" : f"{phonenum}"}]
     }
-
-    if type is 'mms' and title:
-        data['title'] = title
-
+    body2 = json.dumps(body)
     headers = {
-        "Content-Type": "application/json",
-        "charset": "utf-8",
+        "Content-Type": "application/json; charset=utf-8",
+        "x-ncp-apigw-timestamp": timestamp,
+        "x-ncp-iam-access-key": access_key,
+        "x-ncp-apigw-signature-v2": signingKey
     }
-
-    response = requests.post(url + uri, json=data, headers=headers)
+    
+    # requests.post(apiUrl, headers=headers, data=body2)
+    response = requests.post(url + uri, data=body2, headers=headers)
     print(response)
+    
+    # requests.post(apiUrl, headers=headers, data=body2)
+
+    # url = f'https://api-sms.cloud.toast.com'
+    # type = 'sms'
+    # if len(mesg) > 45:
+    #     type = 'mms'
+    # uri = f'/sms/v2.4/appKeys/{appKey}/sender/{type}'
+
+    # recipientList = []
+    # for phone_number in phone_number_list:
+    #     recipientList.append({
+    #         "recipientNo": phone_number,
+    #     })
+    # data = {
+    #     "body": mesg,
+    #     "sendNo": SMS_SEND_NUMBER,
+    #     "recipientList": recipientList
+    # }
+
+    # if type is 'mms' and title:
+    #     data['title'] = title
+
+    # headers = {
+    #     "Content-Type": "application/json",
+    #     "charset": "utf-8",
+    # }
+
+    # response = requests.post(url + uri, json=data, headers=headers)
+    # print(response)
 
 
 def ncp_v2_make_signature(uri, timestamp, access_key, secret_key):

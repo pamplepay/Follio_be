@@ -1,0 +1,10 @@
+MariaDB
+엔드포인트 및 포트
+엔드포인트
+follio-db.c9wwc6uss5t4.ap-northeast-2.rds.amazonaws.com
+포트
+3306
+
+id : pamplepay
+pwd : pample1004!
+db : follio-db
