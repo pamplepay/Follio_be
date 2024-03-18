@@ -11,9 +11,10 @@ SECRET_KEY = env(
     default="2LKlzxucpUf97eHQ17Fm44Dik33UGnf5OTqcaBZ01S5sh3961o9TK4C4jgDXs4dv",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-# ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
-_DJANGO_ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="localhost, 0.0.0.0, 127.0.0.1, 192.168.0.2, 211.234.108.90")
-ALLOWED_HOSTS = _DJANGO_ALLOWED_HOSTS.split(',')
+ALLOWED_HOSTS = ['foliio.co.kr', 'www.foliio.co.kr', '127.0.0.1', '211.234.108.90']
+
+#_DJANGO_ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="*")
+#ALLOWED_HOSTS = _DJANGO_ALLOWED_HOSTS.split(',')
 
 # CACHES
 # ------------------------------------------------------------------------------
